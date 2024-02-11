@@ -1,87 +1,181 @@
 ﻿namespace App
 {
-    public class Program
-    {
-        public enum printStatus { 
-        NotReady,
-        PaperLow,
-        PrinterReady,
-        Error
-        }
-        public static void Main(string[] args)
-        {
-            Console.WriteLine("|===============================================|");
-            Console.WriteLine("  printer status check");
-            Console.WriteLine("|===============================================|");
-            int paperCount = getValidateCount();
-            printStatus printMessage=CheckStatusForPrinter(paperCount);
-        Console.WriteLine(    getStatusmessage(printMessage));
+    public class Program { 
         
-        }
-        public static string getStatusmessage(printStatus status) {
-            switch (status) {
-                case printStatus.NotReady:
-                    return ($"{Environment.NewLine}  not ready");
-                case printStatus.PrinterReady:
-                 return($"{Environment.NewLine}  printer is ready");
-                case printStatus.PaperLow:
-                    return ($"{Environment.NewLine}  paper is low");
-                case printStatus.Error:
-                return($"{Environment.NewLine}  Priner Status:[Error]Entered Paper count is invalid.");
-                default:
-                    return($"{Environment.NewLine}  Priner Status:[Error]Entered Paper count is invalid.");
+    
+    public static void Main(string[] args) {
+            Console.WriteLine("|======================================================|");
+            Console.WriteLine("File Transfer Calculation ");
+            Console.WriteLine("Transmission Rate:960 bytes/sec");
+            Console.WriteLine("|======================================================|");
+           
 
+            double fileSize = ValidateFileSize();
+            string fileUnit = ValidateFileUnit();
+        }  
+
+    public static double ValidateFileSize() {
+
+            while (true)
+            {
+
+                Console.WriteLine("enter the size [range:0 to 2147483647]");
+                string input=Console.ReadLine();
+
+                if (string.IsNullOrWhiteSpace(input)) {
+                    Console.WriteLine("Entered file size is invalid.");
+                    continue;
+                   }
+                if (!double.TryParse(input, out double fileSize)) {
+                    Console.WriteLine("Entered file size is invalid.");
+                    continue;
+                }
+                if (fileSize < 0 || fileSize > 2147483647) { 
+                Console.WriteLine("Entered file size is out of the predefined range.");
+                    continue;
+                }
+
+
+                return fileSize;    
+            } 
+        }
+        
+        public static string ValidateFileUnit() {
+
+
+
+            while (true) {
+                Console.Write("Enter the file size unit [B or KB or MB] : ");
+                string fileUnit=Console.ReadLine().Trim().ToUpper();
+
+                if (string.IsNullOrEmpty(fileUnit)) {
+                    Console.WriteLine("Entered file size is invalid.");
+                    continue;
+                }
+                if (!IsFileUnit(fileUnit))
+                {
+                    Console.WriteLine("Entered file size is invalid.");
+                    continue;
+                }
+                return fileUnit;
             }
-
-
         }
-        public static int getValidateCount()
+    public static bool IsFileUnit(string unit)
+        {
+            return unit == "B" || unit == "KB"|| unit == "MB";
+        }
+    }
+
+}
+
+
+
+
+
+/*using System;
+
+namespace FileTransferTimeCalculator
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("|=================================================================|");
+            Console.WriteLine("\tFILE TRANSFER TIME CALCULATION");
+            Console.WriteLine("\tTransmission rate: 960 bytes/sec");
+            Console.WriteLine("|=================================================================|");
+            Console.WriteLine();
+
+            // Get file size and its unit from the user
+            double fileSize = GetValidatedFileSize();
+            string fileSizeUnit = GetValidatedFileSizeUnit();
+
+            // Convert file size to KB
+            fileSize = ConvertFileSizeToKB(fileSize, fileSizeUnit);
+
+            // Calculate transfer time
+            TimeSpan transferTime = CalculateTransferTime(fileSize);
+
+            // Display the result
+            DisplayResult(transferTime);
+        }
+
+        static double GetValidatedFileSize()
         {
             while (true)
             {
-                Console.Write($"{Environment.NewLine}\u0020Enter the Paper Count[Range: 0 to 2147483647]: ");
-                string count = Console.ReadLine();
-                if (string.IsNullOrWhiteSpace(count))
-                {
-                    Console.WriteLine($"{Environment.NewLine}\u0020Priner Status:[Error]Entered Paper count is invalid.");
-                    continue;
-                }
-                if (!int.TryParse(count, out int PaperCount))
-                {
-                    Console.WriteLine($"{Environment.NewLine}\u0020Priner Status:[Error]Entered Paper count is invalid.");
-                    continue;
-                } 
-                if (PaperCount < 0 || PaperCount > 2147483647)
-                {
-                    Console.WriteLine($"{Environment.NewLine}  Priner Status:[Error]Entered Paper count is invalid.");
-                    continue;
-                }
-                return PaperCount;
-            }
-        }
-        public static printStatus CheckStatusForPrinter(int paperCount)
-        {
-            if (paperCount == 0)
-            {
-                /* return($"{Environment.NewLine}  not ready");*/
-               return printStatus.NotReady;
-            }
-            if (paperCount > 0 && paperCount < 10)
-            {
-                /* return($"{Environment.NewLine}  paper is low");*/
-                return printStatus.PaperLow;
+                Console.Write("Enter the file size [Range: 0 to 2147483647] : ");
+                string input = Console.ReadLine().Trim();
 
-            }
-            if (paperCount > 10)
-            {
-                /* return($"{Environment.NewLine}  printer is ready");*/
-                return printStatus.PrinterReady;
-            }
-            else
-            {
-                /* return($"{Environment.NewLine}  Priner Status:[Error]Entered Paper count is invalid.");*/
-                return printStatus.Error;
+                if (string.IsNullOrWhiteSpace(input) || !double.TryParse(input, out double fileSize) || fileSize < 0 || fileSize > 2147483647)
+                {
+                    Console.WriteLine("Error: Entered file size is invalid.");
+                    Console.WriteLine("Please enter a valid positive number.");
+                    continue;
+                }
+
+                return fileSize;
             }
         }
-    }
+
+        static string GetValidatedFileSizeUnit()
+        {
+            while (true)
+            {
+                Console.Write("Enter the file size unit [B or KB or MB] : ");
+                string fileSizeUnit = Console.ReadLine().Trim().ToUpper();
+
+                if (string.IsNullOrWhiteSpace(fileSizeUnit) || !IsValidFileSizeUnit(fileSizeUnit))
+                {
+                    Console.WriteLine("Error: Entered file size unit is invalid.");
+                    Console.WriteLine("Please enter a valid unit (B, KB, or MB).");
+                    continue;
+                }
+
+                return fileSizeUnit;
+            }
+        }
+
+        static bool IsValidFileSizeUnit(string unit)
+        {
+            return unit == "B" || unit == "KB" || unit == "MB";
+        }
+
+        static double ConvertFileSizeToKB(double size, string unit)
+        {
+            switch (unit)
+            {
+                case "B":
+                    return size / 1024.0;
+                case "MB":
+                    return size * 1024.0;
+                default:
+                    return size;
+            }
+        }
+
+        static TimeSpan CalculateTransferTime(double fileSizeInKB)
+        {
+            int transmissionRate = 960; // bytes/sec
+            double fileSizeInBytes = fileSizeInKB * 1024; // Convert KB to bytes
+            double transferTimeInSeconds = fileSizeInBytes / transmissionRate;
+            return TimeSpan.FromSeconds(transferTimeInSeconds);
+        }
+
+        static void DisplayResult(TimeSpan transferTime)
+        {
+            Console.WriteLine("|======================================================9===========|");
+            Console.WriteLine("\tCALCULATION RESULT");
+            Console.WriteLine("|=================================================================|");
+            Console.WriteLine("File transfer time calculation operation completed successfully.");
+            Console.WriteLine($"Total time required to transfer file: ");
+            Console.WriteLine($"\tDays:\t\t{transferTime.Days}");
+            Console.WriteLine($"\tHours:\t\t{transferTime.Hours}");
+            Console.WriteLine($"\tMinutes:\t{transferTime.Minutes}");
+            Console.WriteLine($"\tSeconds:\t{transferTime.Seconds}");
+            Console.WriteLine($"\tMilliseconds:\t{transferTime.Milliseconds}");
+            Console.WriteLine();
+        }
+*//*    }*//*
 }
+*/
